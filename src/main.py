@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 def mid(point1, point2):
     x = (point1[0] + point2[0])/2
     y = (point1[1] + point2[1])/2
@@ -20,9 +22,21 @@ def bejir(point1, point2, point3, iterate, iterateMax):
         if iterate == 1:
             solution += [point3]
         return solution
-point1 = (1,0)
-point2 = (3,4)
-point3 = (5,0)
-sol = []
-sol = bejir(point1, point2, point3, 1, 3)
-print(sol)
+
+if __name__ == "__main__":
+    point1 = (1,0)
+    point2 = (3,4)
+    point3 = (5,0)
+    sol = []
+    sol = bejir(point1, point2, point3, 1, 3)
+    print(sol)
+    plt.plot([point[0] for point in sol], [point[1] for point in sol], 'ro-')
+    plt.plot([point[0] for point in sol], [point[1] for point in sol], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
+    plt.plot(point1[0], point1[1], 'go')
+    plt.plot(point2[0], point2[1], 'go')
+    plt.plot(point3[0], point3[1], 'go')
+    plt.plot([1, 3], [0, 4], 'r-')
+    plt.plot([3, 5], [4, 0], 'r')
+    plt.title('Kurva Graf Bezier dengan Algoritma Titik Tengah')
+    plt.legend()
+    plt.show()
