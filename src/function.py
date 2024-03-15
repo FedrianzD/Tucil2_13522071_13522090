@@ -5,27 +5,102 @@ def mid(point1, point2):
     return (x,y)
 def bejir(point1, point2, point3, iterate, iterateMax):
     solution = []
+    titikBantu = []
     if iterate == iterateMax:
         pos1 = mid(point1, point2)
         pos2 = mid(point2, point3)
         if iterateMax == 1:
             solution += [point1]
+        titikBantu += [pos1]
         solution += [mid(pos1, pos2)]
+        titikBantu += [pos2]
         if iterateMax == 1:
             solution += [point3]
-        return solution
+        return solution, titikBantu
     elif iterate < iterateMax:
         pos1 = mid(point1, point2)
         pos2 = mid(point2, point3)
         if iterate == 1:
             solution += [point1]
-        solution += bejir(point1, pos1, mid(pos1,pos2), iterate+1, iterateMax)
+        titikBantu += [[pos1,pos2]]
+
+        temp =  bejir(point1, pos1, mid(pos1,pos2), iterate+1, iterateMax)
+        solution += temp[0]
+        titikBantu += [temp[1]]
+
         solution += [mid(pos1, pos2)]
-        solution += bejir(mid(pos1,pos2), pos2, point3, iterate+1, iterateMax)
+
+        temp = bejir(mid(pos1,pos2), pos2, point3, iterate+1, iterateMax)
+        solution += temp[0]
+        titikBantu += [bejir(mid(pos1,pos2), pos2, point3, iterate+1, iterateMax)[1]]
         if iterate == 1:
             solution += [point3]
-        return solution    
+        return solution, titikBantu    
 def bejir2(arr, iterate, iterateMax):
+    solution = []
+    titikBantu = []
+    if iterate == iterateMax:
+        tempArr = copy.deepcopy(arr) # buat menampung titik solusi sementara 
+        temp = []
+        while len(temp) != 1:
+            temp = []
+            for i in range(len(tempArr)-1):
+                temp.append(mid(tempArr[i], tempArr[i+1]))
+            tempArr = temp
+            titikBantutemp = copy.deepcopy(temp)
+            titikBantu.append(titikBantutemp)
+        titikBantu = titikBantu[:-1]
+
+        if iterateMax == 1:
+            solution += [arr[0]]
+
+        solution += tempArr
+
+        if iterateMax == 1:
+            solution += [arr[-1]]
+
+        return solution, titikBantu
+    elif iterate < iterateMax:
+
+        # Titik Awal
+        if iterate == 1:
+            solution += [arr[0]]
+
+        # Tahap Awal
+        arr2 = arr
+        arrKiri = []
+        arrKanan = []
+        while len(arrKiri) != len(arr):
+            temp = []
+            for i in range(len(arr2)-1):
+                temp.append(mid(arr2[i], arr2[i+1]))
+            arrKiri.append(arr2[0])
+            arrKanan.append(arr2[-1])
+            arr2 = temp
+            titikBantutemp = copy.deepcopy(temp)
+            titikBantu.append(titikBantutemp)
+        titikBantu = titikBantu[:-2]
+
+        # Bagian Kiri
+        tempCall = bejir2(arrKiri, iterate+1, iterateMax)
+        solution += tempCall[0]
+        titikBantu += tempCall[1]
+
+        # Bagian Tengah
+        solution += [bejir2(arr, 1, 1)[0][1]]
+
+        # Bagian Kanan
+        arrKanan = list(reversed(arrKanan))
+
+        tempCall = bejir2(arrKanan, iterate+1, iterateMax)
+        solution += tempCall[0]
+        titikBantu += tempCall[1]
+        
+        # Titik Akhir
+        if iterate == 1:
+            solution += [arr[-1]]
+        return solution, titikBantu
+def bejir3(arr, iterate, iterateMax):
     solution = []
     realArr = copy.deepcopy(arr)
     if iterate == iterateMax:
@@ -46,7 +121,7 @@ def bejir2(arr, iterate, iterateMax):
         # Titik Awal
         if iterate == 1:
             solution += [arr[0]]
-        solusiTengah = bejir2(arr, 1, 1)
+        solusiTengah = [bejir3(arr, 1, 1)[1]]
 
         # Bagian Kiri
         arr2 = arr[:-1]
@@ -59,7 +134,7 @@ def bejir2(arr, iterate, iterateMax):
             arrKiri.append(arr2[0])
             arr2 = temp
         arrKiri += solusiTengah
-        solution += bejir2(arrKiri, iterate+1, iterateMax)
+        solution += bejir3(arrKiri, iterate+1, iterateMax)
 
         # Bagian Tengah
         solution += solusiTengah
@@ -76,12 +151,12 @@ def bejir2(arr, iterate, iterateMax):
             arr3 = temp
         arrKanan += solusiTengah
         arrKanan = list(reversed(arrKanan))
-        solution += bejir2(arrKanan, iterate+1, iterateMax)
-        
+        solution += bejir3(arrKanan, iterate+1, iterateMax)
+
         # Titik Akhir
         if iterate == 1:
             solution += [arr[-1]]
-        return solution
+        return solution    
 def bejirBrute(p1, p2, p3, iterate):
     npoint = 2**iterate
     temp = 1/ npoint
