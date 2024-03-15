@@ -160,7 +160,6 @@ def bejir3(arr, iterate, iterateMax):
 def bejirBrute(p1, p2, p3, iterate):
     npoint = 2**iterate
     temp = 1/ npoint
-
     n = temp
     solution = []
     solution += [p1]
