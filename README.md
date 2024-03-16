@@ -16,3 +16,6 @@
 ## Implementasi Algoritma
 
 ## Cara Penggunaan
+### Requirements
+1. Custom tkinter (ctk)
+2. Matplotlib (matplotlib)
