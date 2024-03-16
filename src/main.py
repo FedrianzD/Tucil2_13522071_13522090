@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import function
+import gui
 # point1 = (0,0)
 # point2 = (3,3)
 # point3 = (6,0)
@@ -23,10 +24,10 @@ point1 = (1,0)
 point2 = (3,4)
 point3 = (5,0)
 sol = []
-sol = function.bejir(point1, point2, point3, 1, 3)
+sol = function.bejir(point1, point2, point3, 1, 5)
 print(sol)
-plt.plot([point[0] for point in sol], [point[1] for point in sol], 'ro-')
-plt.plot([point[0] for point in sol], [point[1] for point in sol], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
+plt.plot([point[0] for point in sol[0]], [point[1] for point in sol[0]], 'ro-')
+plt.plot([point[0] for point in sol[0]], [point[1] for point in sol[0]], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
 plt.plot(point1[0], point1[1], 'go')
 plt.plot(point2[0], point2[1], 'go')
 plt.plot(point3[0], point3[1], 'go')
