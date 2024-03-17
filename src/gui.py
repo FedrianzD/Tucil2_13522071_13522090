@@ -1,9 +1,7 @@
-import tkinter
+import time
 
 import customtkinter as ctk
-import controller
-import matplotlib.pyplot as plt
-import matplotlib.animation as anim
+import function
 
 class Gui(ctk.CTk):
     def __init__(self):
@@ -36,7 +34,7 @@ class Gui(ctk.CTk):
         
     def create_main_page(self):
         # configure root for main
-        self.title("Bezier Curve Generator with Midpoint Algorithm")
+        self.title = "Bezier Curve Generator with Midpoint Algorithm"
         self.geometry('400x200')
 
         # configure main page frame
@@ -60,11 +58,11 @@ class Gui(ctk.CTk):
     def create_page_three(self):
         # configure root window
         self.geometry('500x350')
-        self.title("Bezier Curve from Three Points")
+        self.title = "Bezier Curve from 3 Points"
 
         # configure frame
         self.pageThree.grid_columnconfigure((0, 1, 2), weight=1)
-        self.pageThree.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.pageThree.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
 
         # configure title
         title = ctk.CTkLabel(self.pageThree, text="Kurva Bezier dengan 3 Titik",
@@ -99,34 +97,121 @@ class Gui(ctk.CTk):
         input3Y = ctk.CTkEntry(self.pageThree, placeholder_text="y3", font=ctk.CTkFont(family="Calibri", size=14))
         input3Y.grid(row=3, column=2)
 
+        # input iterasi
+        labelIterasi = ctk.CTkLabel(self.pageThree, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi.grid(row=4, column=0, columnspan=2)
+        inputIterasi = ctk.CTkEntry(self.pageThree, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
+        inputIterasi.grid(row=4, column=2)
+
         # submit button
         submitButton = ctk.CTkButton(self.pageThree, text="Submit", font=ctk.CTkFont(family="Calibri", size=22),
-                                     hover_color="#02a4b0", command=lambda: self.convertInput([input1X, input2X, input3X],
-                                                                                              [input1Y, input2Y, input3Y]))
-        submitButton.grid(row=4, column=0, columnspan=3)
-
-
+                                     hover_color="#02a4b0", command=lambda: self.process3Point([input1X, input2X, input3X],
+                                                                                              [input1Y, input2Y, input3Y],
+                                                                                               inputIterasi))
+        submitButton.grid(row=6, column=0, columnspan=3)
+    
+    
+    def create_page_n(self):
+        # configure window
+        self.title = "Bezier Curve from N-Points"
+        self.pageN.rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.pageN.columnconfigure((0, 1), weight=1)
+        
+        # configure title
+        title = ctk.CTkLabel(self.pageN, text="Kurva Bezier dengan n Titik",
+                             font=ctk.CTkFont(family="Calibri", size=22, weight="bold"))
+        title.grid(row=0, column=0)
+        
+        # back button
+        back = ctk.CTkButton(self.pageN, text="Main Menu", font=ctk.CTkFont(family="Calibri", size=14),
+                             command=lambda: self.show_page(self.mainPage))
+        back.grid(row=0, column=1)
+        
+        # label input
+        labelInput = ctk.CTkLabel(self.pageN, text="Masukan jumlah titik:", font=ctk.CTkFont(family="Calibri", size=16))
+        labelInput.grid(row=1, column=0, columnspan=2)
+        
+        # input entry
+        inputNX = ctk.CTkEntry(self.pageN, placeholder_text="x1", font=ctk.CTkFont(family="Calibri", size=14))
+        inputNX.grid(row=2, column=0)
+        
+        inputNY = ctk.CTkEntry(self.pageN, placeholder_text="y1", font=ctk.CTkFont(family="Calibri", size=14))
+        inputNY.grid(row=2, column=1)
+        
+        # instruction button
+        instruction = ctk.CTkLabel(self.pageN, text=f'Pisahkan setiap titik dengan titik koma (;)\nBanyak titik X harus sama dengan titik Y',
+                                          font=ctk.CTkFont(family="Calibri", size=14))
+        instruction.grid(row=3, column=0, columnspan=2)
+        
+        # submit button
+        submitButton = ctk.CTkButton(self.pageN, text="Submit", font=ctk.CTkFont(family="Calibri", size=22),
+                                     hover_color="#02a4b0", command=lambda: self.process3Point([inputNX], [inputNY]))
+        submitButton.grid(row=4, column=0, columnspan=2)
+        
     # convert the entry into integer and validate it
-    def convertInput(self, getEntryX, getEntryY):
+    def process3Point(self, getEntryX, getEntryY, iteration):
         try:
+            # get input coordinate
             for i in range(len(getEntryX)):
-                self.XPointInput.append(int(getEntryX[i].get()))
-                self.YPointInput.append(int(getEntryY[i].get()))
+                self.XPointInput.append(float(getEntryX[i].get()))
+                self.YPointInput.append(float(getEntryY[i].get()))
             self.error = ""
+            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                      text=self.error)
+            errorLabel.grid(row=7, column=0, columnspan=3)
+
+            # get iteration
+            iterate = int(iteration.get())
+            if iterate <= 0:
+                self.error = "Iterasi harus positif!"
+                self.XPointInput = []
+                self.YPointInput = []
+                errorLabel.grid_forget()
+                errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+                                          text=self.error)
+                errorLabel.grid(row=7, column=0, columnspan=3)
+                return
+
+            # process into bezier function
+            arrayOfPoint = [(self.XPointInput[0], self.YPointInput[0]),
+                            (self.XPointInput[1], self.YPointInput[1]),
+                            (self.XPointInput[2], self.YPointInput[2])]
+            firstMidTime = time.time()
+            sol, helper = function.Bezier3Point(arrayOfPoint[0], arrayOfPoint[1], arrayOfPoint[2], 1, iterate)
+            lastMidTime = time.time()
+            firstBruteTime = time.time()
+            sol2 = function.BezierBruteforce(arrayOfPoint[0], arrayOfPoint[1], arrayOfPoint[2], iterate)
+            lastBruteTime = time.time()
+            errorLabel.grid_forget()
+            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                        text=f'Waktu eksekusi (Midpoint algorithm): {lastMidTime-firstMidTime} detik\n'
+                                             f'Waktu eksekusi (Bruteforce algorithm): {lastBruteTime-firstBruteTime} detik')
+            errorLabel.grid(row=7, column=0, columnspan=3)
+            function.showPlot(arrayOfPoint, sol, helper)
+
+        except ValueError:
+            self.XPointInput = []
+            self.YPointInput = []
+            print(ValueError)
+            self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
             errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
                                       text=self.error)
-            errorLabel.grid(row=5, column=0, columnspan=3)
+            errorLabel.grid(row=7, column=0, columnspan=3)
+        errorLabel.grid_forget()
+
+    def processNPoint(self, getEntryX, getEntryY):
+        try:
+            stringX = getEntryX[0].get()
+            stringY = getEntryY[0].get()
+
+
         except ValueError:
             self.XPointInput = []
             self.YPointInput = []
             self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
-            # error label
-            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+            errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
                                       text=self.error)
-            errorLabel.grid(row=5, column=0, columnspan=3)
-
-    def create_page_n(self):
-        return
+            errorLabel.grid(row=7, column=0, columnspan=3)
 
 
     def show_page(self, page):
@@ -138,16 +223,3 @@ class Gui(ctk.CTk):
         # show target page
         page.grid(row=0, column=0, sticky="nsew")
 
-
-def showPlot(arrayOfPoints, arrayOfSol):
-    # Show main bezier plot result
-    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'bo-', label="Kurva Bezier")
-    # Show points in the bezier
-    plt.title("Kurva Graf Bezier dengan Algoritma Titik Tengah")
-    plt.legend()
-    plt.show()
-
-
-if __name__ == "__main__":
-    App = Gui()
-    App.mainloop()
