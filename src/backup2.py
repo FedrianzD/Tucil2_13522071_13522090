@@ -1,59 +1,42 @@
 import copy
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-
 def mid(point1, point2):
     x = (point1[0] + point2[0])/2
     y = (point1[1] + point2[1])/2
     return (x,y)
-
-# 3 titik
-def Bezier3Point(point1, point2, point3, iterate, iterateMax):
+def bejir(point1, point2, point3, iterate, iterateMax):
     solution = []
     titikBantu = []
     if iterate == iterateMax:
         pos1 = mid(point1, point2)
         pos2 = mid(point2, point3)
-
         if iterateMax == 1:
-            solution.append(point1)
-            titikBantu.append([point1])
-        titikBantu.append([pos1, pos2])
-
-        solution.append(mid(pos1, pos2))
-
+            solution += [point1]
+        titikBantu += [pos1]
+        solution += [mid(pos1, pos2)]
+        titikBantu += [pos2]
         if iterateMax == 1:
-            solution.append(point3)
-            titikBantu.append([point3])
-
+            solution += [point3]
         return solution, titikBantu
-
     elif iterate < iterateMax:
         pos1 = mid(point1, point2)
         pos2 = mid(point2, point3)
-
         if iterate == 1:
-            solution.append(point1)
+            solution += [point1]
+        titikBantu += [[pos1,pos2]]
 
-        titikBantu.append([pos1, pos2])
-
-        temp = Bezier3Point(point1, pos1, mid(pos1, pos2), iterate + 1, iterateMax)
+        temp =  bejir(point1, pos1, mid(pos1,pos2), iterate+1, iterateMax)
         solution += temp[0]
-        titikBantu += temp[1]
+        titikBantu += [temp[1]]
 
-        solution.append(mid(pos1, pos2))
+        solution += [mid(pos1, pos2)]
 
-        temp = Bezier3Point(mid(pos1, pos2), pos2, point3, iterate + 1, iterateMax)
+        temp = bejir(mid(pos1,pos2), pos2, point3, iterate+1, iterateMax)
         solution += temp[0]
-        titikBantu += temp[1]
-
+        titikBantu += [bejir(mid(pos1,pos2), pos2, point3, iterate+1, iterateMax)[1]]
         if iterate == 1:
-            solution.append(point3)
-
-        return solution, titikBantu
-
-# n titik
-def BezierNPoint(arr, iterate, iterateMax):
+            solution += [point3]
+        return solution, titikBantu    
+def bejir2(arr, iterate, iterateMax):
     solution = []
     titikBantu = []
     if iterate == iterateMax:
@@ -99,17 +82,17 @@ def BezierNPoint(arr, iterate, iterateMax):
         titikBantu = titikBantu[:-2]
 
         # Bagian Kiri
-        tempCall = BezierNPoint(arrKiri, iterate+1, iterateMax)
+        tempCall = bejir2(arrKiri, iterate+1, iterateMax)
         solution += tempCall[0]
         titikBantu += tempCall[1]
 
         # Bagian Tengah
-        solution += [BezierNPoint(arr, 1, 1)[0][1]]
+        solution += [bejir2(arr, 1, 1)[0][1]]
 
         # Bagian Kanan
         arrKanan = list(reversed(arrKanan))
 
-        tempCall = BezierNPoint(arrKanan, iterate+1, iterateMax)
+        tempCall = bejir2(arrKanan, iterate+1, iterateMax)
         solution += tempCall[0]
         titikBantu += tempCall[1]
         
@@ -117,8 +100,7 @@ def BezierNPoint(arr, iterate, iterateMax):
         if iterate == 1:
             solution += [arr[-1]]
         return solution, titikBantu
-
-def BezierBackup(arr, iterate, iterateMax):
+def bejir3(arr, iterate, iterateMax):
     solution = []
     realArr = copy.deepcopy(arr)
     if iterate == iterateMax:
@@ -139,7 +121,7 @@ def BezierBackup(arr, iterate, iterateMax):
         # Titik Awal
         if iterate == 1:
             solution += [arr[0]]
-        solusiTengah = [BezierBackup(arr, 1, 1)[1]]
+        solusiTengah = [bejir3(arr, 1, 1)[1]]
 
         # Bagian Kiri
         arr2 = arr[:-1]
@@ -152,7 +134,7 @@ def BezierBackup(arr, iterate, iterateMax):
             arrKiri.append(arr2[0])
             arr2 = temp
         arrKiri += solusiTengah
-        solution += BezierBackup(arrKiri, iterate+1, iterateMax)
+        solution += bejir3(arrKiri, iterate+1, iterateMax)
 
         # Bagian Tengah
         solution += solusiTengah
@@ -169,14 +151,13 @@ def BezierBackup(arr, iterate, iterateMax):
             arr3 = temp
         arrKanan += solusiTengah
         arrKanan = list(reversed(arrKanan))
-        solution += BezierBackup(arrKanan, iterate+1, iterateMax)
+        solution += bejir3(arrKanan, iterate+1, iterateMax)
 
         # Titik Akhir
         if iterate == 1:
             solution += [arr[-1]]
         return solution    
-
-def BezierBruteforce(p1, p2, p3, iterate):
+def bejirBrute(p1, p2, p3, iterate):
     npoint = 2**iterate + 1
     temp = 1/ (npoint-1)
     n = temp
@@ -193,39 +174,3 @@ def BezierBruteforce(p1, p2, p3, iterate):
     return solution
 
 
-class Animation:
-    def __init__(self, arrayOfSolution, arrayOfHelper):
-        self.currentXSolution = []
-        self.currentYSolution = []
-        self.currentXHelper = []
-        self.currentYHelper = []
-        self.solution = arrayOfSolution
-        self.helper = arrayOfHelper
-        self.figure, self.axis = plt.subplots()
-        self.line, = self.axis.plot([], [], lw=2)
-        # self.frame = 0
-
-    def initAnimation(self):
-        self.line.set_data([], [])
-
-    def updateSolution(self, frame):
-        if frame < len(self.solution):
-            self.currentXSolution.append(self.solution[frame][0])
-            self.currentYSolution.append(self.solution[frame][1])
-            self.line.set_data(self.currentXSolution, self.currentYSolution)
-
-    def animateSolution(self):
-        FuncAnimation(self.figure, self.updateSolution(), frames=len(self.solution)+1, init_func=self.initAnimation, blit=True, interval=200, repeat=False)
-
-def showPlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
-    # show helper
-    for arr in arrayOfHelper:
-        plt.plot([point[0] for point in arr], [point[1] for point in arr],  linestyle='dotted', color='green')
-
-    # Show main bezier plot result
-    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'ro', markersize=3)
-    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
-    plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'go')
-    plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'r-')
-    plt.legend()
-    plt.show()

@@ -76,3 +76,20 @@
 #         if iterate == 1:
 #             solution += [arr[-1]]
 #         return solution, titikBantu
+
+
+def bejirBrute(p1, p2, p3, iterate):
+    npoint = 2**iterate + 1
+    temp = 1/ (npoint-1)
+    n = temp
+    solution = []
+    solution += [p1]
+    count = 0
+    while n <= (1-temp):
+        rx = ((1-n)**2)*p1[0] + 2*(1-n)*n*p2[0] + (n**2)*p3[0]
+        ry = ((1-n)**2)*p1[1] + 2*(1-n)*n*p2[1] + (n**2)*p3[1]
+        solution += [(rx,ry)]
+        n += temp
+        count+=1
+    solution += [p3]
+    return count
