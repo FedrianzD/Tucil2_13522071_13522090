@@ -223,7 +223,7 @@ def showPlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
         plt.plot([point[0] for point in arr], [point[1] for point in arr],  linestyle='dotted', color='green')
 
     # Show main bezier plot result
-    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'ro', markersize=3)
+    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'ro', markersize=1)
     plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'go')
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'r-')
