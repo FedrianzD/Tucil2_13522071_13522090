@@ -8,43 +8,41 @@ def threePointInput():
         while True:
             try:
                 temp = (tuple(map(float, input(f"Masukkan koordinat titik {i+1} (x y): ").split())))
-                if len(temp) < 2:
+                if len(temp) != 2:
                     print("Koordinat harus terdiri dari 2 nilai!")
                 else:
                     arr.append(temp)
                     break
             except ValueError:
                 print("Input harus berupa integer!")
-            
-    # point1 = tuple(map(float, input("Masukkan koordinat titik 1 (x y): ").split()))
-    # point2 = tuple(map(float, input("Masukkan koordinat titik 2 (x y): ").split()))
-    # point3 = tuple(map(float, input("Masukkan koordinat titik 3 (x y): ").split()))
-    # if point1 == point2 or point2 == point3 or point1 == point3:
-    #     raise "Titik tidak boleh sama!"
     return arr[0], arr[1], arr[2]
 
 
 def nPointInput():
-    try:
-        n = int(input("Masukkan jumlah titik: "))
-        while n <= 2:
-            print("Minimal 2 titik!")
+    while True:
+        try:
             n = int(input("Masukkan jumlah titik: "))
-        arr = []
-        for i in range(n):
-            while True:
-                try:
-                    temp = (tuple(map(float, input(f"Masukkan koordinat titik {i+1} (x y): ").split())))
-                    if len(temp) < 2:
-                        print("Koordinat harus terdiri dari 2 nilai!")
-                    else:
-                        arr.append(temp)
-                        break
-                except ValueError:
-                    print("Input harus berupa integer!")
-        return arr
-    except ValueError:
-        print("Input harus berupa integer!")
+            if n <= 2:
+                print("Minimal 2 titik!")
+                continue
+            else:
+                break
+        except ValueError:
+            print("Input harus berupa integer!")
+    arr = []
+    for i in range(n):
+        while True:
+            try:
+                temp = (tuple(map(float, input(f"Masukkan koordinat titik {i+1} (x y): ").split())))
+                if len(temp) != 2:
+                    print("Koordinat harus terdiri dari 2 nilai!")
+                else:
+                    arr.append(temp)
+                    break
+            except ValueError:
+                print("Input harus berupa integer!")
+    return arr
+    
 
 
 if __name__ == "__main__":
@@ -54,22 +52,42 @@ if __name__ == "__main__":
         try:
             choice = int(input("Masukkan pilihan: "))
         except ValueError:
-            print("Input harus berupa integer!")
+            print("Input harus berupa integer!\n")
             continue
+        
         if choice == 1:
             App = Gui()
             print("Untuk mengakhiri program, tutup semua window GUI yang berjalan")
             App.mainloop()
             break
+        
         elif choice == 2:
             print('1. Tiga Titik\n2. N Titik')
-            choice = int(input("Masukkan pilihan: "))
-
+            while True:
+                try:
+                    choice = int(input("Masukkan pilihan: "))
+                except ValueError:
+                    print("Input harus berupa integer!")
+                    continue
+                if choice == 1 or choice == 2:
+                    break
+                else:
+                    print('Pilihan tidak tersedia! Silahkan masukkan ulang (1/2)')
+                    continue
+                
             if choice == 1:
                 point1, point2, point3 = threePointInput()
-                iterasi = int(input("Masukkan iterasi: "))
-                if iterasi < 1:
-                    raise ValueError
+                while True:
+                    try:
+                        iterasi = int(input("Masukkan iterasi: "))
+                        if iterasi < 1:
+                            print("Iterasi minimal 1 kali!")
+                            continue
+                        else:
+                            break
+                    except ValueError:
+                        print("Input harus berupa integer!")
+                        continue
                 startBrute = time.time()
                 sol2 = function.BezierBruteforce(point1, point2, point3, iterasi)
                 endBrute = time.time()
@@ -82,25 +100,37 @@ if __name__ == "__main__":
                 titikBantu = function.parseArrayNPoint(titikBantu)
                 print("Silahkan tutup plot untuk melanjutkan")
                 function.animatePlot([point1, point2, point3], sol, titikBantu)
+                # function.showPlot([point1, point2, point3], sol, titikBantu)
+            
             elif choice == 2:
                 arr = nPointInput()
-                iterasi = int(input("Masukkan iterasi: "))
-                if iterasi < 1:
-                    raise ValueError
+                while True:
+                    try:
+                        iterasi = int(input("Masukkan iterasi: "))
+                        if iterasi < 1:
+                            print("Iterasi minimal 1 kali!")
+                            continue
+                        else:
+                            break
+                    except ValueError:
+                        print("Input harus berupa integer!")
+                        continue
                 startMid = time.time()
                 temp = function.BezierNPoint(arr, 1, iterasi)
                 sol = temp[0]
                 titikBantu = temp[1]
                 endMid = time.time()
                 new_array = function.parseArrayNPoint(titikBantu)
-                print("Waktu eksekusi algoritma titik tengah: ", endMid - startMid)
+                print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
                 print("Silahkan tutup plot untuk melanjutkan")
                 function.animatePlot(arr, sol, new_array)
+                # function.showPlot(arr, sol, new_array)
             else:
                 print("\nPilihan tidak valid")
+                
         elif choice == 3:
             break
         else:
-            print("Pilihan tidak tersedia!")
+            print("Pilihan tidak tersedia!\n")
             continue
         print('\n')
