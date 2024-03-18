@@ -1,6 +1,9 @@
 import time
 
 import customtkinter as ctk
+from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation
+
 import function
 
 class Gui(ctk.CTk):
@@ -17,6 +20,7 @@ class Gui(ctk.CTk):
         self.XPointInput = []
         self.YPointInput = []
         self.solutionResult = []
+        self.arrayOfInput = []
         self.titikBantu = []
         self.mainPage = ctk.CTkFrame(self)
         self.pageThree = ctk.CTkFrame(self)
@@ -114,7 +118,7 @@ class Gui(ctk.CTk):
     def create_page_n(self):
         # configure window
         self.title = "Bezier Curve from N-Points"
-        self.pageN.rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.pageN.rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
         self.pageN.columnconfigure((0, 1), weight=1)
         
         # configure title
@@ -138,18 +142,28 @@ class Gui(ctk.CTk):
         inputNY = ctk.CTkEntry(self.pageN, placeholder_text="y1", font=ctk.CTkFont(family="Calibri", size=14))
         inputNY.grid(row=2, column=1)
         
+        # input iterasi
+        labelIterasi = ctk.CTkLabel(self.pageN, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi.grid(row=3, column=0)
+        inputIterasi = ctk.CTkEntry(self.pageN, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
+        inputIterasi.grid(row=3, column=1)
+
         # instruction button
         instruction = ctk.CTkLabel(self.pageN, text=f'Pisahkan setiap titik dengan titik koma (;)\nBanyak titik X harus sama dengan titik Y',
                                           font=ctk.CTkFont(family="Calibri", size=14))
-        instruction.grid(row=3, column=0, columnspan=2)
-        
+        instruction.grid(row=4, column=0, columnspan=2)
+
         # submit button
         submitButton = ctk.CTkButton(self.pageN, text="Submit", font=ctk.CTkFont(family="Calibri", size=22),
-                                     hover_color="#02a4b0", command=lambda: self.process3Point([inputNX], [inputNY]))
-        submitButton.grid(row=4, column=0, columnspan=2)
+                                     hover_color="#02a4b0", command=lambda: self.processNPoint(inputNX, inputNY, inputIterasi))
+        submitButton.grid(row=5, column=0, columnspan=2)
         
     # convert the entry into integer and validate it
     def process3Point(self, getEntryX, getEntryY, iteration):
+        self.XPointInput = []
+        self.YPointInput = []
+        self.error = ""
+        self.arrayOfInput = []
         try:
             # get input coordinate
             for i in range(len(getEntryX)):
@@ -173,37 +187,70 @@ class Gui(ctk.CTk):
                 return
 
             # process into bezier function
-            arrayOfPoint = [(self.XPointInput[0], self.YPointInput[0]),
+            self.arrayOfInput = [(self.XPointInput[0], self.YPointInput[0]),
                             (self.XPointInput[1], self.YPointInput[1]),
                             (self.XPointInput[2], self.YPointInput[2])]
             firstMidTime = time.time()
-            sol, helper = function.Bezier3Point(arrayOfPoint[0], arrayOfPoint[1], arrayOfPoint[2], 1, iterate)
+            self.solutionResult, self.titikBantu = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
             lastMidTime = time.time()
             firstBruteTime = time.time()
-            sol2 = function.BezierBruteforce(arrayOfPoint[0], arrayOfPoint[1], arrayOfPoint[2], iterate)
+            sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
             lastBruteTime = time.time()
             errorLabel.grid_forget()
             errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
                                         text=f'Waktu eksekusi (Midpoint algorithm): {lastMidTime-firstMidTime} detik\n'
                                              f'Waktu eksekusi (Bruteforce algorithm): {lastBruteTime-firstBruteTime} detik')
             errorLabel.grid(row=7, column=0, columnspan=3)
-            function.showPlot(arrayOfPoint, sol, helper)
+            function.animatePlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
 
         except ValueError:
             self.XPointInput = []
             self.YPointInput = []
             print(ValueError)
-            self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
+            self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa bilangan!"
             errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
                                       text=self.error)
             errorLabel.grid(row=7, column=0, columnspan=3)
         errorLabel.grid_forget()
 
-    def processNPoint(self, getEntryX, getEntryY):
-        try:
-            stringX = getEntryX[0].get()
-            stringY = getEntryY[0].get()
+    def processNPoint(self, getEntryX, getEntryY, iteration):
+        self.XPointInput = []
+        self.YPointInput = []
+        self.error = ""
 
+        try:
+            stringX = getEntryX.get()
+            stringY = getEntryY.get()
+
+            self.XPointInput = [float(x) for x in stringX.split(';')]
+            self.YPointInput = [float(y) for y in stringY.split(';')]
+
+            if len(self.XPointInput) != len(self.YPointInput):
+                self.error = "Banyak titik X harus sama dengan titik Y!"
+                errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+                                          text=self.error)
+                self.XPointInput = []
+                self.YPointInput = []
+                errorLabel.grid(row=6, column=0, columnspan=3)
+                return
+            iterate = int(iteration.get())
+            if iterate <= 0:
+                self.error = "Iterasi harus positif!"
+                self.XPointInput = []
+                self.YPointInput = []
+                errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+                                          text=self.error)
+                errorLabel.grid(row=6, column=0, columnspan=3)
+                return
+            self.arrayOfInput = [(self.XPointInput[i], self.YPointInput[i]) for i in range(len(self.XPointInput))]
+
+            startTime = time.time()
+            self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
+            endTime = time.time()
+            errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                      text=f'Waktu eksekusi: {endTime-startTime} detik')
+            errorLabel.grid(row=6, column=0, columnspan=3)
+            function.showPlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
 
         except ValueError:
             self.XPointInput = []
@@ -211,7 +258,7 @@ class Gui(ctk.CTk):
             self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
             errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
                                       text=self.error)
-            errorLabel.grid(row=7, column=0, columnspan=3)
+            errorLabel.grid(row=6, column=0, columnspan=3)
 
 
     def show_page(self, page):

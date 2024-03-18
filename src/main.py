@@ -20,11 +20,8 @@ def nPointInput():
     try:
         n = int(input("Masukkan jumlah titik: "))
         arr = []
-        if len(arr) < 3:
-            raise "Jumlah titik minimal 3"
         for i in range(n):
             arr.append(tuple(map(float, input(f"Masukkan koordinat titik {i+1} (x y): ").split())))
-
         return arr
     except:
         print("Input tidak valid")
@@ -38,6 +35,7 @@ if __name__ == "__main__":
             if choice == 1:
                 App = Gui()
                 App.mainloop()
+                break
             elif choice == 2:
                 print(f'1. Tiga Titik\n2. N Titik')
                 choice = int(input("Masukkan pilihan: "))
@@ -59,7 +57,7 @@ if __name__ == "__main__":
                     function.showPlot([point1, point2, point3], sol, titikBantu)
                 elif choice == 2:
                     arr = nPointInput()
-                    iterasi = int(input("Masukkan iterasi: "))
+                    iterasi = int(input("Masukkan iterasi:"))
                     if iterasi < 1:
                         raise ValueError
                     startMid = time.time()
@@ -74,7 +72,7 @@ if __name__ == "__main__":
                 break
         except:
             print("Input tidak valid")
-        print(f'\n\n')
+        print(f'\n')
 
 
 # point1 = (0,0)
