@@ -116,11 +116,13 @@ def BezierNPoint(arr, iterate, iterateMax):
 
         if iterateMax == 1:
             solution += [arr[0]]
+            titikBantu.append(arr[0])
 
         solution += tempArr
 
         if iterateMax == 1:
             solution += [arr[-1]]
+            titikBantu.append(arr[0])
 
         return solution, titikBantu
     elif iterate < iterateMax:
@@ -298,11 +300,25 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     
     
 def parseArrayNPoint(titikBantu):
-    new_array = []
-    for subarray in titikBantu:
-        if len(subarray) >= 2:
-            new_subarray = subarray[:2]
+    # new_array = []
+    # for subarray in titikBantu:
+    #     if len(subarray) >= 2:
+    #         new_subarray = subarray[:2]
+    #     else:
+    #         new_subarray = subarray + [None] * (2 - len(subarray))
+    #     new_array.append(new_subarray)
+    
+    # return new_array
+    temp = []
+    for array in titikBantu:
+        for subarray in array:
+            temp.append(subarray)
+    
+    new = []
+    res = []
+    for point in temp:
+        if len(new) != 2:
+            new.append(point)
         else:
-            new_subarray = subarray + [None] * (2 - len(subarray))
-        new_array.append(new_subarray)
-    return new_array
+            res.append(new)
+    return res
