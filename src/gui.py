@@ -200,6 +200,7 @@ class Gui(ctk.CTk):
             self.solutionResult = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
             lastMidTime = time.time()
             self.titikBantu = function.Bezier3PointHelper(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
+            self.titikBantu = function.parseArrayNPoint(self.titikBantu)
             firstBruteTime = time.time()
             sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
             lastBruteTime = time.time()
@@ -208,7 +209,7 @@ class Gui(ctk.CTk):
                                         text=f'Waktu eksekusi (DnC algorithm): {(lastMidTime-firstMidTime) * 1000} ms\n'
                                              f'Waktu eksekusi (Bruteforce algorithm): {(lastBruteTime-firstBruteTime) * 1000} ms')
             errorLabel.grid(row=7, column=0, columnspan=3)
-            function.showPlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
+            function.animatePlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
 
         except ValueError:
             self.XPointInput = []
@@ -257,6 +258,7 @@ class Gui(ctk.CTk):
             startTime = time.time()
             self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
             endTime = time.time()
+            self.titikBantu = function.parseArrayNPoint(self.titikBantu)
             errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
                                       text=f'Waktu eksekusi: {(endTime-startTime) * 1000} ms')
             errorLabel.grid(row=6, column=0, columnspan=3)
