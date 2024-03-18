@@ -2,7 +2,7 @@ import copy
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-def mid(point1, point2):
+def DnC(point1, point2):
     x = (point1[0] + point2[0])/2
     y = (point1[1] + point2[1])/2
     return (x,y)
@@ -10,47 +10,93 @@ def mid(point1, point2):
 # 3 titik
 def Bezier3Point(point1, point2, point3, iterate, iterateMax):
     solution = []
-    titikBantu = []
+    # titikBantu = []
     if iterate == iterateMax:
-        pos1 = mid(point1, point2)
-        pos2 = mid(point2, point3)
+        pos1 = DnC(point1, point2)
+        pos2 = DnC(point2, point3)
 
         if iterateMax == 1:
             solution.append(point1)
+        #     titikBantu.append([point1])
+        # titikBantu.append([pos1, pos2])
+
+        solution.append(DnC(pos1, pos2))
+
+        if iterateMax == 1:
+            solution.append(point3)
+            # titikBantu.append([point3])
+
+        return solution
+
+    elif iterate < iterateMax:
+        pos1 = DnC(point1, point2)
+        pos2 = DnC(point2, point3)
+
+        if iterate == 1:
+            solution.append(point1)
+
+        # titikBantu.append([pos1, pos2])
+
+        temp = Bezier3Point(point1, pos1, DnC(pos1, pos2), iterate + 1, iterateMax)
+        solution += temp
+        # titikBantu += temp[1]
+
+        solution.append(DnC(pos1, pos2))
+
+        temp = Bezier3Point(DnC(pos1, pos2), pos2, point3, iterate + 1, iterateMax)
+        solution += temp
+        # titikBantu += temp[1]
+
+        if iterate == 1:
+            solution.append(point3)
+
+        return solution
+    
+
+def Bezier3PointHelper(point1, point2, point3, iterate, iterateMax):
+    # solution = []
+    titikBantu = []
+    if iterate == iterateMax:
+        pos1 = DnC(point1, point2)
+        pos2 = DnC(point2, point3)
+
+        if iterateMax == 1:
+            # solution.append(point1)
             titikBantu.append([point1])
         titikBantu.append([pos1, pos2])
 
-        solution.append(mid(pos1, pos2))
+        # solution.append(DnC(pos1, pos2))
 
         if iterateMax == 1:
-            solution.append(point3)
+            # solution.append(point3)
             titikBantu.append([point3])
 
-        return solution, titikBantu
+        return titikBantu
 
     elif iterate < iterateMax:
-        pos1 = mid(point1, point2)
-        pos2 = mid(point2, point3)
+        pos1 = DnC(point1, point2)
+        pos2 = DnC(point2, point3)
 
-        if iterate == 1:
-            solution.append(point1)
+        # if iterate == 1:
+        #     solution.append(point1)
 
         titikBantu.append([pos1, pos2])
 
-        temp = Bezier3Point(point1, pos1, mid(pos1, pos2), iterate + 1, iterateMax)
-        solution += temp[0]
-        titikBantu += temp[1]
+        temp = Bezier3PointHelper(point1, pos1, DnC(pos1, pos2), iterate + 1, iterateMax)
+        # solution += temp[0]
+        titikBantu += temp
 
-        solution.append(mid(pos1, pos2))
+        # solution.append(DnC(pos1, pos2))
 
-        temp = Bezier3Point(mid(pos1, pos2), pos2, point3, iterate + 1, iterateMax)
-        solution += temp[0]
-        titikBantu += temp[1]
+        temp = Bezier3PointHelper(DnC(pos1, pos2), pos2, point3, iterate + 1, iterateMax)
+        # solution += temp[0]
+        titikBantu += temp
 
-        if iterate == 1:
-            solution.append(point3)
+        # if iterate == 1:
+        #     solution.append(point3)
 
-        return solution, titikBantu
+        return titikBantu
+
 
 # n titik
 def BezierNPoint(arr, iterate, iterateMax):
@@ -62,7 +108,7 @@ def BezierNPoint(arr, iterate, iterateMax):
         while len(temp) != 1:
             temp = []
             for i in range(len(tempArr)-1):
-                temp.append(mid(tempArr[i], tempArr[i+1]))
+                temp.append(DnC(tempArr[i], tempArr[i+1]))
             tempArr = temp
             titikBantutemp = copy.deepcopy(temp)
             titikBantu.append(titikBantutemp)
@@ -90,7 +136,7 @@ def BezierNPoint(arr, iterate, iterateMax):
         while len(arrKiri) != len(arr):
             temp = []
             for i in range(len(arr2)-1):
-                temp.append(mid(arr2[i], arr2[i+1]))
+                temp.append(DnC(arr2[i], arr2[i+1]))
             arrKiri.append(arr2[0])
             arrKanan.append(arr2[-1])
             arr2 = temp
@@ -118,6 +164,8 @@ def BezierNPoint(arr, iterate, iterateMax):
             solution += [arr[-1]]
         return solution, titikBantu
 
+
+
 def BezierBackup(arr, iterate, iterateMax):
     solution = []
     realArr = copy.deepcopy(arr)
@@ -126,7 +174,7 @@ def BezierBackup(arr, iterate, iterateMax):
         while len(temp) != 1:
             temp = []
             for i in range(len(realArr)-1):
-                temp.append(mid(realArr[i], realArr[i+1]))
+                temp.append(DnC(realArr[i], realArr[i+1]))
             realArr = temp
         if iterateMax == 1:
             solution += [arr[0]]
@@ -148,7 +196,7 @@ def BezierBackup(arr, iterate, iterateMax):
         while len(arrKiri) != elementKiri:
             temp = []
             for i in range(len(arr2)-1):
-                temp.append(mid(arr2[i], arr2[i+1]))
+                temp.append(DnC(arr2[i], arr2[i+1]))
             arrKiri.append(arr2[0])
             arr2 = temp
         arrKiri += solusiTengah
@@ -164,7 +212,7 @@ def BezierBackup(arr, iterate, iterateMax):
         while len(arrKanan) != elementKanan:
             temp = []
             for i in range(len(arr3)-1):
-                temp.append(mid(arr3[i], arr3[i+1]))
+                temp.append(DnC(arr3[i], arr3[i+1]))
             arrKanan.append(arr3[-1])
             arr3 = temp
         arrKanan += solusiTengah
@@ -238,76 +286,16 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
             currentHelperY.append([point[1] for point in arrayOfHelper[i]])
             lineHelper.set_data(currentHelperX, currentHelperY)
     
-    interval = 100 if len(arrayOfHelper) > 30 else 400
+    if len(arrayOfHelper) < 100:
+        interval = 200
+    elif 100 <= len(arrayOfHelper) < 800:
+        interval = 50
+    else:
+        interval = 2
     ani = FuncAnimation(fig, animate, frames=max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints)), interval=interval , repeat=False)
     plt.grid()
     plt.show()
     
-
-def BezierNPoint2(arr, iterate, iterateMax):
-    solution = []
-    titikBantu = []
-    
-    if iterate == iterateMax:
-        tempArr = copy.deepcopy(arr)
-        temp = []
-        while len(tempArr) != 1:
-            temp = []
-            for i in range(len(tempArr)-1):
-                temp.append(mid(tempArr[i], tempArr[i+1]))
-            tempArr = temp
-            titikBantutemp = []
-            for i in range(len(tempArr)-1):
-                titikBantutemp.append([tempArr[i], tempArr[i+1]])
-            titikBantu.append(titikBantutemp)
-        
-        if iterateMax == 1:
-            solution.append(arr[0])
-        
-        solution += tempArr
-        
-        if iterateMax == 1:
-            solution.append(arr[-1])
-        
-        return solution, titikBantu
-    
-    elif iterate < iterateMax:
-        if iterate == 1:
-            solution.append(arr[0])
-        
-        arr2 = arr
-        arrKiri = []
-        arrKanan = []
-        while len(arrKiri) != len(arr):
-            temp = []
-            for i in range(len(arr2)-1):
-                temp.append(mid(arr2[i], arr2[i+1]))
-            arrKiri.append(arr2[0])
-            arrKanan.append(arr2[-1])
-            arr2 = temp
-            titikBantutemp = []
-            for i in range(len(temp)-1):
-                titikBantutemp.append([temp[i], temp[i+1]])
-            titikBantu.append(titikBantutemp)
-        
-        if iterate == 1:
-            titikBantu = titikBantu[:-1]
-        
-        tempCall = BezierNPoint(arrKiri, iterate+1, iterateMax)
-        solution += tempCall[0]
-        titikBantu += tempCall[1]
-        
-        solution.append(BezierNPoint(arr, 1, 1)[0][1])
-        
-        arrKanan = list(reversed(arrKanan))
-        tempCall = BezierNPoint(arrKanan, iterate+1, iterateMax)
-        solution += tempCall[0]
-        titikBantu += tempCall[1]
-        
-        if iterate == 1:
-            solution.append(arr[-1])
-        
-        return solution, titikBantu
     
 def parseArrayNPoint(titikBantu):
     new_array = []

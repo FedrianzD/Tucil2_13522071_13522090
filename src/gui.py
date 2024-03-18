@@ -12,8 +12,8 @@ class Gui(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
-        self.title("Bezier Curve Generator with Midpoint Algorithm")
-        self.columnconfigure((0, 1), weight=1)
+        self.title("Bezier Curve Generator with Divide and Conquer Algorithm")
+        self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
         # attribute
@@ -39,15 +39,15 @@ class Gui(ctk.CTk):
         
     def create_main_page(self):
         # configure root for main
-        self.title = "Bezier Curve Generator with Midpoint Algorithm"
-        self.geometry('400x200')
+        self.title = "Bezier Curve Generator with Divide and Conquer Algorithm"
+        self.geometry('500x200')
 
         # configure main page frame
         self.mainPage.columnconfigure(0, weight=2)
         self.mainPage.rowconfigure((0, 1, 2), weight=2)
 
         # configure items in main page
-        title = ctk.CTkLabel(self.mainPage, text="Kurva Bezier dengan Algoritma Midpoint",
+        title = ctk.CTkLabel(self.mainPage, text="Kurva Bezier dengan Algoritma Divide and Conquer",
                              font=ctk.CTkFont(family="Calibri", size=24, weight="bold"))
         title.grid(row=0, column=0)
         openThree = ctk.CTkButton(self.mainPage, text="Start with Three Point Input", hover_color="#0ed9e8",
@@ -62,7 +62,7 @@ class Gui(ctk.CTk):
 
     def create_page_three(self):
         # configure root window
-        self.geometry('400x400')
+        self.geometry('700x400')
         self.title = "Bezier Curve from 3 Points"
 
         # configure frame
@@ -189,22 +189,26 @@ class Gui(ctk.CTk):
                 errorLabel.grid(row=7, column=0, columnspan=3)
                 return
 
+            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                          text="Loading...")
+            errorLabel.grid(row=7, column=0, columnspan=3)
             # process into bezier function
             self.arrayOfInput = [(self.XPointInput[0], self.YPointInput[0]),
                             (self.XPointInput[1], self.YPointInput[1]),
                             (self.XPointInput[2], self.YPointInput[2])]
             firstMidTime = time.time()
-            self.solutionResult, self.titikBantu = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
+            self.solutionResult = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
             lastMidTime = time.time()
+            self.titikBantu = function.Bezier3PointHelper(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
             firstBruteTime = time.time()
             sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
             lastBruteTime = time.time()
             errorLabel.grid_forget()
             errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                        text=f'Waktu eksekusi (Midpoint algorithm): {lastMidTime-firstMidTime} detik\n'
-                                             f'Waktu eksekusi (Bruteforce algorithm): {lastBruteTime-firstBruteTime} detik')
+                                        text=f'Waktu eksekusi (DnC algorithm): {(lastMidTime-firstMidTime) * 1000} ms\n'
+                                             f'Waktu eksekusi (Bruteforce algorithm): {(lastBruteTime-firstBruteTime) * 1000} ms')
             errorLabel.grid(row=7, column=0, columnspan=3)
-            function.animatePlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
+            function.showPlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
 
         except ValueError:
             self.XPointInput = []
@@ -254,7 +258,7 @@ class Gui(ctk.CTk):
             self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
             endTime = time.time()
             errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                      text=f'Waktu eksekusi: {endTime-startTime} detik')
+                                      text=f'Waktu eksekusi: {(endTime-startTime) * 1000} ms')
             errorLabel.grid(row=6, column=0, columnspan=3)
             temp = function.parseArrayNPoint(self.titikBantu)
             function.animatePlot(self.arrayOfInput, self.solutionResult, temp)
@@ -266,7 +270,7 @@ class Gui(ctk.CTk):
             errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
                                       text=self.error)
             errorLabel.grid(row=6, column=0, columnspan=3)
-
+        errorLabel.grid_forget()
 
     def show_page(self, page):
         # hide all pages

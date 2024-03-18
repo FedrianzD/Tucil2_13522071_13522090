@@ -7,8 +7,8 @@ def threePointInput():
         point1 = tuple(map(float, input("Masukkan koordinat titik 1 (x y): ").split()))
         point2 = tuple(map(float, input("Masukkan koordinat titik 2 (x y): ").split()))
         point3 = tuple(map(float, input("Masukkan koordinat titik 3 (x y): ").split()))
-        if point1 == point2 or point2 == point3 or point1 == point3:
-            raise "Titik tidak boleh sama!"
+        # if point1 == point2 or point2 == point3 or point1 == point3:
+        #     raise "Titik tidak boleh sama!"
         return point1, point2, point3
     except:
         print("Input tidak valid")
@@ -45,7 +45,8 @@ if __name__ == "__main__":
                 if iterasi < 1:
                     raise ValueError
                 startMid = time.time()
-                sol, titikBantu = function.Bezier3Point(point1, point2, point3, 1, iterasi)
+                sol = function.Bezier3Point(point1, point2, point3, 1, iterasi)
+                titikBantu = function.Bezier3PointHelper(point1, point2, point3, 1, iterasi)
                 endMid = time.time()
                 print("Waktu eksekusi algoritma titik tengah: ", endMid - startMid)
                 startBrute = time.time()
@@ -60,7 +61,7 @@ if __name__ == "__main__":
                 if iterasi < 1:
                     raise ValueError
                 startMid = time.time()
-                sol, titikBantu = function.BezierNPoint(arr, 1, iterasi)
+                sol = function.BezierNPoint(arr, 1, iterasi)
                 endMid = time.time()
                 new_array = function.parseArrayNPoint(titikBantu)
                 print("Waktu eksekusi algoritma titik tengah: ", endMid - startMid)
