@@ -218,14 +218,48 @@ class Animation:
         FuncAnimation(self.figure, self.updateSolution(), frames=len(self.solution)+1, init_func=self.initAnimation, blit=True, interval=200, repeat=False)
 
 def showPlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
+    plt.close()
     # show helper
     for arr in arrayOfHelper:
         plt.plot([point[0] for point in arr], [point[1] for point in arr],  linestyle='dotted', color='green')
 
     # Show main bezier plot result
-    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'ro', markersize=1)
+    plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'ro', markersize=2 if len(arrayOfSol) > 30 else 3)
     plt.plot([point[0] for point in arrayOfSol], [point[1] for point in arrayOfSol], 'b-', label='Kurva Graf Bezier dengan Algoritma Titik Tengah')
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'go')
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'r-')
     plt.legend()
+    plt.show()
+
+def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
+    plt.close()
+    fig, ax = plt.subplots(figsize=(20, 10))
+    linePoints, = ax.plot([], [], 'ro-')
+    lineSol, = ax.plot([], [], 'bo-', markersize=2 if len(arrayOfSol) > 30 else 3)
+    lineHelper, = ax.plot([], [], linestyle='dotted', color='green')
+
+    ax.set_xlim(min([point[0] for point in arrayOfPoints]) - 1, max([point[0] for point in arrayOfPoints]) + 1)
+    ax.set_ylim(min([point[1] for point in arrayOfPoints]) - 1, max([point[1] for point in arrayOfPoints]) + 1)
+    currentPointsX = []
+    currentPointsY = []
+    currentSolX = []
+    currentSolY = []
+    currentHelperX = []
+    currentHelperY = []
+    currentIteration = 0
+    def animate(i):
+        if i < len(arrayOfSol):
+            currentSolX.append(arrayOfSol[i][0])
+            currentSolY.append(arrayOfSol[i][1])
+            lineSol.set_data(currentSolX, currentSolY)
+        if i < len(arrayOfPoints):
+            currentPointsX.append(arrayOfPoints[i][0])
+            currentPointsY.append(arrayOfPoints[i][1])
+            linePoints.set_data(currentPointsX, currentPointsY)
+        if i < len(arrayOfHelper):
+            currentHelperX.append([point[0] for point in arrayOfHelper[i]])
+            currentHelperY.append([point[1] for point in arrayOfHelper[i]])
+            lineHelper.set_data(currentHelperX, currentHelperY)
+
+    ani = FuncAnimation(fig, animate, frames=max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints)), interval=300, repeat=False)
     plt.show()
