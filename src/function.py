@@ -193,30 +193,6 @@ def BezierBruteforce(p1, p2, p3, iterate):
     return solution
 
 
-class Animation:
-    def __init__(self, arrayOfSolution, arrayOfHelper):
-        self.currentXSolution = []
-        self.currentYSolution = []
-        self.currentXHelper = []
-        self.currentYHelper = []
-        self.solution = arrayOfSolution
-        self.helper = arrayOfHelper
-        self.figure, self.axis = plt.subplots()
-        self.line, = self.axis.plot([], [], lw=2)
-        # self.frame = 0
-
-    def initAnimation(self):
-        self.line.set_data([], [])
-
-    def updateSolution(self, frame):
-        if frame < len(self.solution):
-            self.currentXSolution.append(self.solution[frame][0])
-            self.currentYSolution.append(self.solution[frame][1])
-            self.line.set_data(self.currentXSolution, self.currentYSolution)
-
-    def animateSolution(self):
-        FuncAnimation(self.figure, self.updateSolution(), frames=len(self.solution)+1, init_func=self.initAnimation, blit=True, interval=200, repeat=False)
-
 def showPlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     plt.close()
     # show helper
@@ -229,11 +205,12 @@ def showPlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'go')
     plt.plot([point[0] for point in arrayOfPoints], [point[1] for point in arrayOfPoints], 'r-')
     plt.legend()
+    plt.grid()
     plt.show()
 
 def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     plt.close()
-    fig, ax = plt.subplots(figsize=(20, 10))
+    fig, ax = plt.subplots()
     linePoints, = ax.plot([], [], 'ro-')
     lineSol, = ax.plot([], [], 'bo-', markersize=2 if len(arrayOfSol) > 30 else 3)
     lineHelper, = ax.plot([], [], linestyle='dotted', color='green')
@@ -260,6 +237,84 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
             currentHelperX.append([point[0] for point in arrayOfHelper[i]])
             currentHelperY.append([point[1] for point in arrayOfHelper[i]])
             lineHelper.set_data(currentHelperX, currentHelperY)
-
-    ani = FuncAnimation(fig, animate, frames=max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints)), interval=300, repeat=False)
+    
+    interval = 100 if len(arrayOfHelper) > 30 else 400
+    ani = FuncAnimation(fig, animate, frames=max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints)), interval=interval , repeat=False)
+    plt.grid()
     plt.show()
+    
+
+def BezierNPoint2(arr, iterate, iterateMax):
+    solution = []
+    titikBantu = []
+    
+    if iterate == iterateMax:
+        tempArr = copy.deepcopy(arr)
+        temp = []
+        while len(tempArr) != 1:
+            temp = []
+            for i in range(len(tempArr)-1):
+                temp.append(mid(tempArr[i], tempArr[i+1]))
+            tempArr = temp
+            titikBantutemp = []
+            for i in range(len(tempArr)-1):
+                titikBantutemp.append([tempArr[i], tempArr[i+1]])
+            titikBantu.append(titikBantutemp)
+        
+        if iterateMax == 1:
+            solution.append(arr[0])
+        
+        solution += tempArr
+        
+        if iterateMax == 1:
+            solution.append(arr[-1])
+        
+        return solution, titikBantu
+    
+    elif iterate < iterateMax:
+        if iterate == 1:
+            solution.append(arr[0])
+        
+        arr2 = arr
+        arrKiri = []
+        arrKanan = []
+        while len(arrKiri) != len(arr):
+            temp = []
+            for i in range(len(arr2)-1):
+                temp.append(mid(arr2[i], arr2[i+1]))
+            arrKiri.append(arr2[0])
+            arrKanan.append(arr2[-1])
+            arr2 = temp
+            titikBantutemp = []
+            for i in range(len(temp)-1):
+                titikBantutemp.append([temp[i], temp[i+1]])
+            titikBantu.append(titikBantutemp)
+        
+        if iterate == 1:
+            titikBantu = titikBantu[:-1]
+        
+        tempCall = BezierNPoint(arrKiri, iterate+1, iterateMax)
+        solution += tempCall[0]
+        titikBantu += tempCall[1]
+        
+        solution.append(BezierNPoint(arr, 1, 1)[0][1])
+        
+        arrKanan = list(reversed(arrKanan))
+        tempCall = BezierNPoint(arrKanan, iterate+1, iterateMax)
+        solution += tempCall[0]
+        titikBantu += tempCall[1]
+        
+        if iterate == 1:
+            solution.append(arr[-1])
+        
+        return solution, titikBantu
+    
+def parseArrayNPoint(titikBantu):
+    new_array = []
+    for subarray in titikBantu:
+        if len(subarray) >= 2:
+            new_subarray = subarray[:2]
+        else:
+            new_subarray = subarray + [None] * (2 - len(subarray))
+        new_array.append(new_subarray)
+    return new_array
