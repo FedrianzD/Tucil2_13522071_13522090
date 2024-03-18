@@ -13,7 +13,7 @@ class Gui(ctk.CTk):
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
         self.title("Bezier Curve Generator with Midpoint Algorithm")
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure((0, 1), weight=1)
         self.rowconfigure(0, weight=1)
 
         # attribute
@@ -25,6 +25,7 @@ class Gui(ctk.CTk):
         self.mainPage = ctk.CTkFrame(self)
         self.pageThree = ctk.CTkFrame(self)
         self.pageN = ctk.CTkFrame(self)
+        self.pagePlot = ctk.CTkFrame(self)
         self.error = ""
         
         # create frame
@@ -61,7 +62,7 @@ class Gui(ctk.CTk):
 
     def create_page_three(self):
         # configure root window
-        self.geometry('500x350')
+        self.geometry('400x400')
         self.title = "Bezier Curve from 3 Points"
 
         # configure frame
@@ -164,6 +165,8 @@ class Gui(ctk.CTk):
         self.YPointInput = []
         self.error = ""
         self.arrayOfInput = []
+        self.titikBantu = []
+        self.solutionResult = []
         try:
             # get input coordinate
             for i in range(len(getEntryX)):
@@ -217,6 +220,9 @@ class Gui(ctk.CTk):
         self.XPointInput = []
         self.YPointInput = []
         self.error = ""
+        self.titikBantu = []
+        self.solutionResult = []
+        self.arrayOfInput = []
 
         try:
             stringX = getEntryX.get()
@@ -250,7 +256,8 @@ class Gui(ctk.CTk):
             errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
                                       text=f'Waktu eksekusi: {endTime-startTime} detik')
             errorLabel.grid(row=6, column=0, columnspan=3)
-            function.showPlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
+            temp = function.parseArrayNPoint(self.titikBantu)
+            function.animatePlot(self.arrayOfInput, self.solutionResult, temp)
 
         except ValueError:
             self.XPointInput = []
