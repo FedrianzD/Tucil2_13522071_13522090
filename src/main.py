@@ -56,7 +56,7 @@ if __name__ == "__main__":
 |_/    \/(_______)|/   \__/   \_/   |/     \|  |/ \___/ (_______/(____/   \_)(_______/\_______/(_/  (_______/|/   \__/
                                                                                                                     ''')
     while True:
-        print('1. Masuk lewat GUI\n2. Masuk lewat CLI (jika iterasinya besar (iterasi > 10 dianjurkan))\n3. Keluar')
+        print('1. Masuk lewat GUI\n2. Masuk lewat CLI (jika iterasinya besar (iterasi > 12 dianjurkan))\n3. Keluar')
         try:
             choice = int(input("Masukkan pilihan: "))
         except ValueError:
