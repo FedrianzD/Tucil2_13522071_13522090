@@ -99,7 +99,7 @@ class Gui(ctk.CTk):
         input3Y.grid(row=3, column=2)
 
         # input iterasi
-        labelIterasi = ctk.CTkLabel(self.pageThree, text="Iterasi (positif, \nnilai yang besar membuat program dan animasi lambat):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi = ctk.CTkLabel(self.pageThree, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
         labelIterasi.grid(row=4, column=0, columnspan=2)
         inputIterasi = ctk.CTkEntry(self.pageThree, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
         inputIterasi.grid(row=4, column=2)
@@ -140,7 +140,7 @@ class Gui(ctk.CTk):
         inputNY.grid(row=2, column=1)
         
         # input iterasi
-        labelIterasi = ctk.CTkLabel(self.pageN, text="Iterasi (positif, \nnilai yang besar membuat program dan animasi lambat):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi = ctk.CTkLabel(self.pageN, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
         labelIterasi.grid(row=3, column=0)
         inputIterasi = ctk.CTkEntry(self.pageN, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
         inputIterasi.grid(row=3, column=1)
