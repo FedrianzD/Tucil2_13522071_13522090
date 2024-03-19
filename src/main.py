@@ -108,6 +108,7 @@ if __name__ == "__main__":
                 if iterasi == 1:
                     titikBantu = function.parseArrayNPoint(titikBantu)
                 showOrAnimate = input("Apakah anda ingin menampilkan animasi? \n(Jika iterasi besar sangat dianjurkan animasi dimatikan) (Y / other keys): ")
+                print("\nMohon tunggu untuk iterasi yang besar\n")
                 print("Silahkan tutup plot untuk melanjutkan")
                 if showOrAnimate == "Y" or showOrAnimate == "y":
                     function.animatePlot([point1, point2, point3], sol, titikBantu)
@@ -136,6 +137,7 @@ if __name__ == "__main__":
                 new_array = function.parseArrayNPoint(titikBantu)
                 print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
                 showOrAnimate = input("Apakah anda ingin menampilkan animasi? \n(Jika iterasi besar sangat dianjurkan animasi dimatikan) (Y / other keys): ")
+                print("\nMohon tunggu untuk iterasi yang besar\n")
                 print("Silahkan tutup plot untuk melanjutkan")
                 if showOrAnimate == "Y" or showOrAnimate == "y":
                     function.animatePlot(arr, sol, new_array)
