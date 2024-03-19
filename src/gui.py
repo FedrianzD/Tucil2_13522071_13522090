@@ -129,7 +129,7 @@ class Gui(ctk.CTk):
         back.grid(row=0, column=1)
         
         # label input
-        labelInput = ctk.CTkLabel(self.pageN, text="Masukan jumlah titik:", font=ctk.CTkFont(family="Calibri", size=16))
+        labelInput = ctk.CTkLabel(self.pageN, text="Masukan titik x dan y:", font=ctk.CTkFont(family="Calibri", size=16))
         labelInput.grid(row=1, column=0, columnspan=2)
         
         # input entry
@@ -166,7 +166,7 @@ class Gui(ctk.CTk):
         
         errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
                                     text="Loading...")
-        errorLabel.grid(row=7, column=0, columnspan=3)
+        errorLabel.grid(row=6, column=0, columnspan=2)
         try:
             for i in range(len(getEntryX)):
                 self.XPointInput.append(float(getEntryX[i].get()))
@@ -247,7 +247,7 @@ class Gui(ctk.CTk):
         self.titikBantu = []
         self.solutionResult = []
         errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                    text="")
+                                    text="Loading...")
         errorLabel.grid(row=7, column=0, columnspan=3)
 
         try:
@@ -272,7 +272,7 @@ class Gui(ctk.CTk):
                 return
             
         except:
-            errorLabel.configure("Masukan harus berupa bilangan!", text_color="red")
+            errorLabel.configure(text="Masukan harus berupa bilangan!", text_color="red")
             self.XPointInput = []
             self.YPointInput = []
             self.pageN.after(8000, lambda: errorLabel.grid_forget())
