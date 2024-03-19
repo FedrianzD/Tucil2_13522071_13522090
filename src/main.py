@@ -14,7 +14,7 @@ def threePointInput():
                     arr.append(temp)
                     break
             except ValueError:
-                print("Input harus berupa integer!")
+                print("Input harus berupa angka!")
     return arr[0], arr[1], arr[2]
 
 
@@ -40,7 +40,7 @@ def nPointInput():
                     arr.append(temp)
                     break
             except ValueError:
-                print("Input harus berupa integer!")
+                print("Input harus berupa angka!")
     return arr
     
 
