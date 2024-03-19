@@ -23,7 +23,7 @@ def nPointInput():
         try:
             n = int(input("Masukkan jumlah titik: "))
             if n <= 2:
-                print("Minimal 2 titik!")
+                print("Minimal 3 titik!")
                 continue
             else:
                 break
