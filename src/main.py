@@ -88,13 +88,13 @@ if __name__ == "__main__":
                     except ValueError:
                         print("Input harus berupa integer!")
                         continue
-                startBrute = time.time()
+                startBrute = time.perf_counter()
                 sol2 = function.BezierBruteforce(point1, point2, point3, iterasi)
-                endBrute = time.time()
+                endBrute = time.perf_counter()
                 print("Waktu eksekusi algoritma brute force: ", (endBrute - startBrute) * 1000)
-                startMid = time.time()
+                startMid = time.perf_counter()
                 sol = function.Bezier3Point(point1, point2, point3, 1, iterasi)
-                endMid = time.time()
+                endMid = time.perf_counter()
                 titikBantu = function.Bezier3PointHelper(point1, point2, point3, 1, iterasi)
                 print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
                 if iterasi == 1:

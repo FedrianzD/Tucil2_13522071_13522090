@@ -189,14 +189,16 @@ class Gui(ctk.CTk):
                         (self.XPointInput[1], self.YPointInput[1]),
                         (self.XPointInput[2], self.YPointInput[2])]
         errorLabel.configure(text="Processing...", text_color="blue")
-        # bruteforce
-        firstBruteTime = time.time()
-        sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
-        lastBruteTime = time.time()
+        
         # dnc
-        firstMidTime = time.time()
+        firstMidTime = time.perf_counter()
         self.solutionResult = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
-        lastMidTime = time.time()
+        lastMidTime = time.perf_counter()
+        time.sleep(0.05)
+        # bruteforce
+        firstBruteTime = time.perf_counter()
+        sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
+        lastBruteTime = time.perf_counter()
         self.titikBantu = function.Bezier3PointHelper(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
         if iterate == 1:
             self.titikBantu = function.parseArrayNPoint(self.titikBantu)
