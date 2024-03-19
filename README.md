@@ -73,7 +73,7 @@ python3 main.py
 4. Program akan berjalan dan memberikan opsi pada pengguna untuk menggunakan
 GUI atau CLI. Program disarankan menggunakan CLI jika iterasi yang akan digunakan pada
 program bernilai sangat besar (iterasi di atas 11 atau 12). Hal ini dikarenakan _library_ GUI tidak mampu mengatasi proses yang 
-berat dan loading yang berlangsung lama.
+berat dan loading yang berlangsung lama. Pengguna tetap dapat menggunakan GUI, namun loading akan cukup lama dibandingkan CLI.
 5. Jika pengguna menggunakan GUI, pengguna dapat menekan tombol untuk memilih input 3 titik atau n-titik. Input pada n-titik dipisahkan
 oleh titik koma (;) untuk setiap titiknya. Contohnya pada input koordinat x sebanyak 5 titik yaitu "1;2;3;4;5" (tanpa tanda kutip).
 6. Jika pengguna menggunakan CLI, pengguna akan diminta untuk memasukkan input koordinat x dan y sebanyak 3 titik atau n-titik. Input pada setiap titiknya dipisahkan
@@ -83,4 +83,4 @@ oleh spasi untuk koordinat x dan y.
 
 > **_NOTE:_** Jika program mengalami crash pada CLI saat pengguna menekan enter untuk generate animasi, cari bagian main dan ganti fungsi function.animatePlot ke fungsi function.showPlot
 
-> **_NOTE:_** Iterasi yang menghasilkan titik solusi mencapai ribuan akan menghasilkan animasi yang sangat lambat jika menggunakan garis bantu iterasi, sehingga animasi akan dinonaktifkan
+> **_NOTE:_** Iterasi yang menghasilkan titik solusi mencapai ribuan (di atas 8000 titik) akan menghasilkan animasi yang sangat lambat sehingga pengguna dianjurkan menggunakan CLI untuk membuat kurva iterasi tinggi. Jika proses animasi dirasa terlalu lama, pengguna dapat memilih untuk menampilkan secara sekaligus kurva yang dihasilkan 
