@@ -1,6 +1,7 @@
 import copy
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from itertools import count
 
 def DnC(point1, point2):
     x = (point1[0] + point2[0])/2
@@ -274,6 +275,7 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     currentHelperX = []
     currentHelperY = []
     currentIteration = 0
+    length = len(arrayOfHelper)
     def animate(i):
         if i < len(arrayOfSol):
             currentSolX.append(arrayOfSol[i][0])
@@ -288,13 +290,16 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
             currentHelperY.append([point[1] for point in arrayOfHelper[i]])
             lineHelper.set_data(currentHelperX, currentHelperY)
     
-    if len(arrayOfHelper) < 100:
+    if length < 30:
         interval = 200
-    elif 100 <= len(arrayOfHelper) < 800:
-        interval = 50
+    elif length < 90:
+        interval = 30
+    elif length < 400:
+        interval = 1
     else:
-        interval = 2
-    ani = FuncAnimation(fig, animate, frames=max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints)), interval=interval , repeat=False)
+        interval = 0.00000000001
+    maxFrame = max(len(arrayOfSol), len(arrayOfHelper), len(arrayOfPoints))
+    ani = FuncAnimation(fig, animate, frames=maxFrame, interval=interval , repeat=False)
     plt.grid()
     plt.show()
     

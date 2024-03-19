@@ -46,9 +46,17 @@ def nPointInput():
 
 
 if __name__ == "__main__":
+    print(''' _                 _______           _______    ______   _______ _________ _  _______ _________ _    _______  _______ 
+| \    /\|\     /|(  ____ )|\     /|(  ___  )  (  ___ \ (  ____ \\__    _// )/ ___   )\__   __/( \  (  ____ \(  ____ )
+|  \  / /| )   ( || (    )|| )   ( || (   ) |  | (   ) )| (    \/   )  ( / / \/   )  |   ) (    \ \ | (    \/| (    )|
+|  (_/ / | |   | || (____)|| |   | || (___) |  | (__/ / | (__       |  |( (      /   )   | |     ) )| (__    | (____)|
+|   _ (  | |   | ||     __)( (   ) )|  ___  |  |  __ (  |  __)      |  || |     /   /    | |     | ||  __)   |     __)
+|  ( \ \ | |   | || (\ (    \ \_/ / | (   ) |  | (  \ \ | (         |  |( (    /   /     | |     ) )| (      | (\ (   
+|  /  \ \| (___) || ) \ \__  \   /  | )   ( |  | )___) )| (____/\|\_)  ) \ \  /   (_/\___) (___ / / | (____/\| ) \ \__
+|_/    \/(_______)|/   \__/   \_/   |/     \|  |/ \___/ (_______/(____/   \_)(_______/\_______/(_/  (_______/|/   \__/
+                                                                                                                    ''')
     while True:
-        print("BEZIER CURVE GENERATOR")
-        print('1. Masuk lewat GUI\n2. Masuk lewat CLI (jika iterasinya besar)\n3. Keluar')
+        print('1. Masuk lewat GUI\n2. Masuk lewat CLI (jika iterasinya besar (iterasi > 10 dianjurkan))\n3. Keluar')
         try:
             choice = int(input("Masukkan pilihan: "))
         except ValueError:
@@ -99,9 +107,13 @@ if __name__ == "__main__":
                 print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
                 if iterasi == 1:
                     titikBantu = function.parseArrayNPoint(titikBantu)
+                showOrAnimate = input("Apakah anda ingin menampilkan animasi? \n(Jika iterasi besar sangat dianjurkan animasi dimatikan) (Y / other keys): ")
                 print("Silahkan tutup plot untuk melanjutkan")
-                function.animatePlot([point1, point2, point3], sol, titikBantu)
-                # function.showPlot([point1, point2, point3], sol, titikBantu)
+                if showOrAnimate == "Y" or showOrAnimate == "y":
+                    function.animatePlot([point1, point2, point3], sol, titikBantu)
+                else:
+                    function.showPlot([point1, point2, point3], sol, titikBantu)
+                    
             
             elif choice == 2:
                 arr = nPointInput()
@@ -123,9 +135,12 @@ if __name__ == "__main__":
                 endMid = time.time()
                 new_array = function.parseArrayNPoint(titikBantu)
                 print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
+                showOrAnimate = input("Apakah anda ingin menampilkan animasi? \n(Jika iterasi besar sangat dianjurkan animasi dimatikan) (Y / other keys): ")
                 print("Silahkan tutup plot untuk melanjutkan")
-                function.animatePlot(arr, sol, new_array)
-                # function.showPlot(arr, sol, new_array)
+                if showOrAnimate == "Y" or showOrAnimate == "y":
+                    function.animatePlot(arr, sol, new_array)
+                else:
+                    function.showPlot(arr, sol, new_array)
             else:
                 print("\nPilihan tidak valid")
                 

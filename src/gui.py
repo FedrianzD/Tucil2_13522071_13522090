@@ -99,7 +99,7 @@ class Gui(ctk.CTk):
         input3Y.grid(row=3, column=2)
 
         # input iterasi
-        labelIterasi = ctk.CTkLabel(self.pageThree, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi = ctk.CTkLabel(self.pageThree, text="Iterasi (positif, \nnilai yang besar membuat program dan animasi lambat):", font=ctk.CTkFont(family="Calibri", size=16))
         labelIterasi.grid(row=4, column=0, columnspan=2)
         inputIterasi = ctk.CTkEntry(self.pageThree, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
         inputIterasi.grid(row=4, column=2)
@@ -140,7 +140,7 @@ class Gui(ctk.CTk):
         inputNY.grid(row=2, column=1)
         
         # input iterasi
-        labelIterasi = ctk.CTkLabel(self.pageN, text="Iterasi (positif):", font=ctk.CTkFont(family="Calibri", size=16))
+        labelIterasi = ctk.CTkLabel(self.pageN, text="Iterasi (positif, \nnilai yang besar membuat program dan animasi lambat):", font=ctk.CTkFont(family="Calibri", size=16))
         labelIterasi.grid(row=3, column=0)
         inputIterasi = ctk.CTkEntry(self.pageN, placeholder_text="iterasi", font=ctk.CTkFont(family="Calibri", size=14))
         inputIterasi.grid(row=3, column=1)
@@ -166,7 +166,7 @@ class Gui(ctk.CTk):
         
         errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
                                     text="Loading...")
-        errorLabel.grid(row=6, column=0, columnspan=2)
+        errorLabel.grid(row=6, column=0, columnspan=3)
         try:
             for i in range(len(getEntryX)):
                 self.XPointInput.append(float(getEntryX[i].get()))
@@ -183,7 +183,8 @@ class Gui(ctk.CTk):
             self.YPointInput = []
             self.pageThree.after(8000, lambda: errorLabel.grid_forget())
             return
-        
+        if iterate > 10:
+                errorLabel.configure(text="Nilai iterasi sangat besar. Animasi dan proses perhitungan akan berjalan lambat")
          # process into bezier function
         self.arrayOfInput = [(self.XPointInput[0], self.YPointInput[0]),
                         (self.XPointInput[1], self.YPointInput[1]),
@@ -270,7 +271,8 @@ class Gui(ctk.CTk):
                 self.YPointInput = []
                 self.pageN.after(8000, lambda: errorLabel.grid_forget())
                 return
-            
+            if iterate > 10:
+                errorLabel.configure(text="Nilai iterasi sangat besar. Animasi dan proses perhitungan akan berjalan lambat")
         except:
             errorLabel.configure(text="Masukan harus berupa bilangan!", text_color="red")
             self.XPointInput = []
