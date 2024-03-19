@@ -36,7 +36,7 @@ pertama.
 Sebagai perbandingan kompleksitas, digunakan pula algoritma _Bruteforce_ menggunakan rumus yang sudah disediakan, yaitu:
 1. Untuk iterasi sebanyak _i_ kali, bagi kurva menjadi 1 / (2 ^ i)
 2. Untuk setiap iterasi, gunakan rumus:
-newPoint = ((1-n)**2)*p1 + 2*(1-n)*n*p2 + (n**2)*p3
+newPoint = ((1-n) ^ 2) x p1 + 2 x (1-n) x n x p2 + (n ^ 2) x p3
 3. Masukkan setiap newPoint ke larik solusi
 4. Tambahkan titik awal dan titik akhir ke solusi
 
