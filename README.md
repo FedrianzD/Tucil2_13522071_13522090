@@ -12,6 +12,7 @@
 3. [Cara Penggunaan](#cara-penggunaan)
 
 ## Deskripsi Tugas
+Program ini adalah program untuk melakukan visualisasi kurva Bezier dengan menggunakan algoritma _midpoint_ yang merupakan implementasi dari algoritma _divide and conquer_. Program akan menerima
 
 ## Implementasi Algoritma
 

@@ -1,9 +1,5 @@
 import time
-
 import customtkinter as ctk
-from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
-
 import function
 
 class Gui(ctk.CTk):
@@ -119,7 +115,7 @@ class Gui(ctk.CTk):
     def create_page_n(self):
         # configure window
         self.title = "Bezier Curve from N-Points"
-        self.pageN.rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
+        self.pageN.rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
         self.pageN.columnconfigure((0, 1), weight=1)
         
         # configure title
@@ -150,7 +146,7 @@ class Gui(ctk.CTk):
         inputIterasi.grid(row=3, column=1)
 
         # instruction button
-        instruction = ctk.CTkLabel(self.pageN, text=f'Pisahkan setiap titik dengan titik koma (;)\nBanyak titik X harus sama dengan titik Y',
+        instruction = ctk.CTkLabel(self.pageN, text='Pisahkan setiap titik dengan titik koma (;)\nBanyak titik X harus sama dengan titik Y',
                                           font=ctk.CTkFont(family="Calibri", size=14))
         instruction.grid(row=4, column=0, columnspan=2)
 
@@ -167,112 +163,169 @@ class Gui(ctk.CTk):
         self.arrayOfInput = []
         self.titikBantu = []
         self.solutionResult = []
+        
+        errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                    text="Loading...")
+        errorLabel.grid(row=7, column=0, columnspan=3)
         try:
-            # get input coordinate
             for i in range(len(getEntryX)):
                 self.XPointInput.append(float(getEntryX[i].get()))
                 self.YPointInput.append(float(getEntryY[i].get()))
-            self.error = ""
-            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                      text=self.error)
-            errorLabel.grid(row=7, column=0, columnspan=3)
-
-            # get iteration
-            iterate = int(iteration.get())
-            if iterate <= 0:
-                self.error = "Iterasi harus positif!"
-                self.XPointInput = []
-                self.YPointInput = []
-                errorLabel.grid_forget()
-                errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
-                                          text=self.error)
-                errorLabel.grid(row=7, column=0, columnspan=3)
-                return
-
-            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                          text="Loading...")
-            errorLabel.grid(row=7, column=0, columnspan=3)
-            # process into bezier function
-            self.arrayOfInput = [(self.XPointInput[0], self.YPointInput[0]),
-                            (self.XPointInput[1], self.YPointInput[1]),
-                            (self.XPointInput[2], self.YPointInput[2])]
-            firstMidTime = time.time()
-            self.solutionResult = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
-            lastMidTime = time.time()
-            self.titikBantu = function.Bezier3PointHelper(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
-            self.titikBantu = function.parseArrayNPoint(self.titikBantu)
-            firstBruteTime = time.time()
-            sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
-            lastBruteTime = time.time()
-            errorLabel.grid_forget()
-            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                        text=f'Waktu eksekusi (DnC algorithm): {(lastMidTime-firstMidTime) * 1000} ms\n'
-                                             f'Waktu eksekusi (Bruteforce algorithm): {(lastBruteTime-firstBruteTime) * 1000} ms')
-            errorLabel.grid(row=7, column=0, columnspan=3)
-            function.animatePlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
-
+                iterate = int(iteration.get())
         except ValueError:
+            errorLabel.configure(text="Input tidak boleh ada yang kosong dan harus berupa bilangan!", text_color="red")
+            self.pageThree.after(8000, lambda: errorLabel.grid_forget())
+            # errorLabel.grid_forget()
+            return
+        if iterate <= 0:
+            errorLabel.configure(text="Iterasi harus positif!", text_color="red")
             self.XPointInput = []
             self.YPointInput = []
-            print(ValueError)
-            self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa bilangan!"
-            errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
-                                      text=self.error)
-            errorLabel.grid(row=7, column=0, columnspan=3)
+            self.pageThree.after(8000, lambda: errorLabel.grid_forget())
+            return
+        
+         # process into bezier function
+        self.arrayOfInput = [(self.XPointInput[0], self.YPointInput[0]),
+                        (self.XPointInput[1], self.YPointInput[1]),
+                        (self.XPointInput[2], self.YPointInput[2])]
+        errorLabel.configure(text="Processing...", text_color="blue")
+        # bruteforce
+        firstBruteTime = time.time()
+        sol2 = function.BezierBruteforce(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], iterate)
+        lastBruteTime = time.time()
+        # dnc
+        firstMidTime = time.time()
+        self.solutionResult = function.Bezier3Point(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
+        lastMidTime = time.time()
+        self.titikBantu = function.Bezier3PointHelper(self.arrayOfInput[0], self.arrayOfInput[1], self.arrayOfInput[2], 1, iterate)
+        if iterate == 1:
+            self.titikBantu = function.parseArrayNPoint(self.titikBantu)
+        errorLabel.configure(font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                    text=f'Waktu eksekusi (DnC algorithm): {(lastMidTime-firstMidTime) * 1000} ms\n'
+                                        f'Waktu eksekusi (Bruteforce algorithm): {(lastBruteTime-firstBruteTime) * 1000} ms\n'
+                                        f'Untuk membuat grafik baru, tutup grafik yang masih terbuka')
+        try:
+            function.animatePlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
+        except:
+            function.showPlot(self.arrayOfInput, self.solutionResult, self.titikBantu)
         errorLabel.grid_forget()
+        
+        # try:
+        #     # get input coordinate
+        #     self.error = ""
+
+        #     # get iteration
+        #         errorLabel.grid_forget()
+        #         errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+        #                                   text=self.error)
+        #         errorLabel.grid(row=7, column=0, columnspan=3)
+        #         return
+
+        #     errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+        #                                   text="Loading...")
+        #     errorLabel.grid(row=7, column=0, columnspan=3)
+           
+
+        # except ValueError:
+        #     self.XPointInput = []
+        #     self.YPointInput = []
+        #     print(ValueError)
+        #     self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa bilangan!"
+        #     errorLabel = ctk.CTkLabel(self.pageThree, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+        #                               text=self.error)
+        #     errorLabel.grid(row=7, column=0, columnspan=3)
+        # errorLabel.grid_forget()
+
 
     def processNPoint(self, getEntryX, getEntryY, iteration):
         self.XPointInput = []
         self.YPointInput = []
         self.error = ""
+        self.arrayOfInput = []
         self.titikBantu = []
         self.solutionResult = []
-        self.arrayOfInput = []
+        errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                    text="")
+        errorLabel.grid(row=7, column=0, columnspan=3)
 
         try:
             stringX = getEntryX.get()
             stringY = getEntryY.get()
-
+            
             self.XPointInput = [float(x) for x in stringX.split(';')]
             self.YPointInput = [float(y) for y in stringY.split(';')]
-
             if len(self.XPointInput) != len(self.YPointInput):
-                self.error = "Banyak titik X harus sama dengan titik Y!"
-                errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
-                                          text=self.error)
+                errorLabel.configure(text="Banyak nilai x harus sama dengan nilai y!", text_color="red")
                 self.XPointInput = []
                 self.YPointInput = []
-                errorLabel.grid(row=6, column=0, columnspan=3)
+                self.pageN.after(8000, lambda: errorLabel.grid_forget())
                 return
+            
             iterate = int(iteration.get())
             if iterate <= 0:
-                self.error = "Iterasi harus positif!"
+                errorLabel.configure(text="Iterasi harus positif!", text_color='red')
                 self.XPointInput = []
                 self.YPointInput = []
-                errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
-                                          text=self.error)
-                errorLabel.grid(row=6, column=0, columnspan=3)
+                self.pageN.after(8000, lambda: errorLabel.grid_forget())
                 return
-            self.arrayOfInput = [(self.XPointInput[i], self.YPointInput[i]) for i in range(len(self.XPointInput))]
-
-            startTime = time.time()
-            self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
-            endTime = time.time()
-            self.titikBantu = function.parseArrayNPoint(self.titikBantu)
-            errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
-                                      text=f'Waktu eksekusi: {(endTime-startTime) * 1000} ms')
-            errorLabel.grid(row=6, column=0, columnspan=3)
-            temp = function.parseArrayNPoint(self.titikBantu)
-            function.animatePlot(self.arrayOfInput, self.solutionResult, temp)
-
-        except ValueError:
+            
+        except:
+            errorLabel.configure("Masukan harus berupa bilangan!", text_color="red")
             self.XPointInput = []
             self.YPointInput = []
-            self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
-            errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
-                                      text=self.error)
-            errorLabel.grid(row=6, column=0, columnspan=3)
+            self.pageN.after(8000, lambda: errorLabel.grid_forget())
+            return
+        
+        self.arrayOfInput = [(self.XPointInput[i], self.YPointInput[i]) for i in range(len(self.XPointInput))]
+
+        startTime = time.time()
+        self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
+        endTime = time.time()
+        self.titikBantu = function.parseArrayNPoint(self.titikBantu)
+        errorLabel.configure(font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+                                    text=f'Waktu eksekusi: {(endTime-startTime) * 1000} ms\n'
+                                    f'Tutup grafik yang terbuka untuk submit ulang')
+        temp = function.parseArrayNPoint(self.titikBantu)
+        try:
+            function.animatePlot(self.arrayOfInput, self.solutionResult, temp)
+        except:
+            function.showPlot(self.arrayOfInput, self.solutionResult, temp)
         errorLabel.grid_forget()
+        
+        
+        # try:
+        #     self.error = "Banyak titik X harus sama dengan titik Y!"
+        #     errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+        #                                 text=self.error)
+        #     self.XPointInput = []
+        #     self.YPointInput = []
+        #     errorLabel.grid(row=6, column=0, columnspan=3)
+        #     return
+        
+        #     errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+        #                                 text=self.error)
+        #     errorLabel.grid(row=6, column=0, columnspan=3)
+        #     return
+        #     self.arrayOfInput = [(self.XPointInput[i], self.YPointInput[i]) for i in range(len(self.XPointInput))]
+
+        #     startTime = time.time()
+        #     self.solutionResult, self.titikBantu = function.BezierNPoint(self.arrayOfInput, 1, iterate)
+        #     endTime = time.time()
+        #     self.titikBantu = function.parseArrayNPoint(self.titikBantu)
+        #     errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="blue",
+        #                               text=f'Waktu eksekusi: {(endTime-startTime) * 1000} ms')
+        #     errorLabel.grid(row=6, column=0, columnspan=3)
+        #     temp = function.parseArrayNPoint(self.titikBantu)
+        #     function.animatePlot(self.arrayOfInput, self.solutionResult, temp)
+
+        # except ValueError:
+        #     self.XPointInput = []
+        #     self.YPointInput = []
+        #     self.error = "Input tidak valid! Masukan tidak boleh kosong dan harus berupa integer!"
+        #     errorLabel = ctk.CTkLabel(self.pageN, font=ctk.CTkFont(family="Calibri", size=14), text_color="red",
+        #                               text=self.error)
+        #     errorLabel.grid(row=6, column=0, columnspan=3)
+        # errorLabel.grid_forget()
 
     def show_page(self, page):
         # hide all pages

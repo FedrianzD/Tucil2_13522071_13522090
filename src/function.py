@@ -300,15 +300,6 @@ def animatePlot(arrayOfPoints, arrayOfSol, arrayOfHelper):
     
     
 def parseArrayNPoint(titikBantu):
-    # new_array = []
-    # for subarray in titikBantu:
-    #     if len(subarray) >= 2:
-    #         new_subarray = subarray[:2]
-    #     else:
-    #         new_subarray = subarray + [None] * (2 - len(subarray))
-    #     new_array.append(new_subarray)
-    
-    # return new_array
     temp = []
     for array in titikBantu:
         for subarray in array:
@@ -322,3 +313,12 @@ def parseArrayNPoint(titikBantu):
         else:
             res.append(new)
     return res
+        # new_array = []
+    # for subarray in titikBantu:
+    #     if len(subarray) >= 2:
+    #         new_subarray = subarray[:2]
+    #     else:
+    #         new_subarray = subarray + [None] * (2 - len(subarray))
+    #     new_array.append(new_subarray)
+    
+    # return new_array

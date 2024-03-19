@@ -97,7 +97,8 @@ if __name__ == "__main__":
                 endMid = time.time()
                 titikBantu = function.Bezier3PointHelper(point1, point2, point3, 1, iterasi)
                 print("Waktu eksekusi algoritma titik tengah: ", (endMid - startMid) * 1000)
-                titikBantu = function.parseArrayNPoint(titikBantu)
+                if iterasi == 1:
+                    titikBantu = function.parseArrayNPoint(titikBantu)
                 print("Silahkan tutup plot untuk melanjutkan")
                 function.animatePlot([point1, point2, point3], sol, titikBantu)
                 # function.showPlot([point1, point2, point3], sol, titikBantu)
